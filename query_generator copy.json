@@ -1,0 +1,149 @@
+{
+"openapi": "3.0.3",
+"info": {
+    "title": "Query Processing API 2",
+    "version": "1.0.0",
+    "description": "API that converts natural language queries to SQL, executes them on DB2, and returns results."
+},
+"servers": [
+    {
+    "url": "http://9.30.122.32:7000/",
+    "description": "Production server"
+    }
+],
+"paths": {
+    "/query": {
+    "post": {
+        "summary": "Process a natural language query",
+        "operationId": "processQuery",
+        "requestBody": {
+        "required": true,
+        "content": {
+            "application/json": {
+            "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+            }
+            }
+        }
+        },
+        "responses": {
+        "200": {
+            "description": "Query processed successfully",
+            "content": {
+            "application/json": {
+                "schema": {
+                "$ref": "#/components/schemas/QueryResponse"
+                }
+            }
+            }
+        },
+        "400": {
+            "description": "Missing or invalid user query"
+        },
+        "422": {
+            "description": "Validation Error",
+            "content": {
+            "application/json": {
+                "schema": {
+                "$ref": "#/components/schemas/HTTPValidationError"
+                }
+            }
+            }
+        },
+        "500": {
+            "description": "Internal server error"
+        }
+        }
+    }
+    }
+},
+"components": {
+    "schemas": {
+    "QueryRequest": {
+        "type": "object",
+        "title": "QueryRequest",
+        "required": [
+        "user_query"
+        ],
+        "properties": {
+        "user_query": {
+            "type": "string",
+            "description": "Natural language user query"
+        }
+        }
+    },
+    "QueryResponse": {
+        "type": "object",
+        "title": "QueryResponse",
+        "required": [
+        "success",
+        "natural_query",
+        "generated_sql",
+        "results",
+        "timestamp"
+        ],
+        "properties": {
+        "success": {
+            "type": "boolean",
+            "description": "Whether the query was processed successfully"
+        },
+        "natural_query": {
+            "type": "string",
+            "description": "User’s natural language query"
+        },
+        "generated_sql": {
+            "type": "string",
+            "description": "SQL generated from natural language"
+        },
+        "results": {
+            "type": "array",
+            "description": "DB2 query results",
+            "items": {
+            "type": "object",
+            "additionalProperties": true
+            }
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of response"
+        }
+        }
+    },
+    "ValidationError": {
+        "type": "object",
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "properties": {
+        "loc": {
+            "type": "array",
+            "items": {
+            "anyOf": [
+                { "type": "string" },
+                { "type": "integer" }
+            ]
+            }
+        },
+        "msg": {
+            "type": "string"
+        },
+        "type": {
+            "type": "string"
+        }
+        }
+    },
+    "HTTPValidationError": {
+        "type": "object",
+        "title": "HTTPValidationError",
+        "properties": {
+        "detail": {
+            "type": "array",
+            "items": {
+            "$ref": "#/components/schemas/ValidationError"
+            }
+        }
+        }
+    }
+    }
+}
+}
