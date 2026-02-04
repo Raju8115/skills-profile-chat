@@ -5,9 +5,9 @@ from datetime import datetime
 from typing import List, Dict, Any
 import uvicorn
 
-from chatAssist.sql_query_generator import SQLQueryGenerator
-from chatAssist.db_client import DB2Client
-from chatAssist.config import Config
+from sql_query_generator import SQLQueryGenerator
+from db_client import DB2Client
+from config import Config
 
 # ---------------- Pydantic models ----------------
 
