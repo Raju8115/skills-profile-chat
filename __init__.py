@@ -15,9 +15,9 @@ Components:
 __version__ = "1.0.0"
 __author__ = "IBM Skills Profile Team"
 
-from chatAssist.sql_query_generator import SQLQueryGenerator
-from chatAssist.db_client import DB2Client
-from chatAssist.config import Config
+from sql_query_generator import SQLQueryGenerator
+from db_client import DB2Client
+from config import Config
 
 __all__ = ["SQLQueryGenerator", "DB2Client", "Config"]
 
