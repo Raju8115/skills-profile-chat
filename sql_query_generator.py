@@ -710,6 +710,30 @@ Approved items mean:
 approval_status = 'APPROVED'
 OR approved_by IS NOT NULL.
 
+STATUS COMPARISON RULE
+----------------------
+Submission and approval statuses may appear in mixed case.
+
+Always compare statuses using:
+
+UPPER(column) LIKE UPPER('%VALUE%')
+
+Never use:
+column = 'VALUE'
+
+Statuses include:
+• APPROVED
+• REJECTED
+• PENDING
+• PARTIAL
+• PARTIALLY_APPROVED
+• PENDING_REVIEW
+
+Examples:
+UPPER(s.submission_status) LIKE UPPER('%PENDING%')
+UPPER(si.approval_status) LIKE UPPER('%APPROVED%')
+
+
 COUNT VS LIST RULE
 ------------------
 If question asks:
@@ -736,11 +760,30 @@ When using COUNT or aggregates:
 All non-aggregated columns MUST appear in GROUP BY.
 Avoid mixing aggregates with columns unless grouped.
 
-TEXT COMPARISON RULE
---------------------
-Always use:
+TEXT COMPARISON RULE (STRICT)
+------------------------------
+For ALL user-provided text filters:
+
+ALWAYS use partial matching:
 LOWER(column) LIKE LOWER('%value%')
 
+NEVER use equality (=) for text fields.
+
+This rule applies to:
+- user_name
+- product_name
+- titles
+- asset names
+- PJRS
+- email
+- content titles
+- categories
+- or ANY text search field.
+
+Equality (=) is allowed ONLY for:
+- numeric IDs
+- boolean fields
+- foreign keys
 Never use strict equality for names.
 
 DISTINCT RULE
