@@ -120,6 +120,10 @@ def shutdown_event():
     """Close DB connection when FastAPI shuts down."""
     db_client.close()
 
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
 
 # Run app directly with uvicorn
 if __name__ == "__main__":
