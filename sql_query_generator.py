@@ -848,6 +848,8 @@ When asking for full expertise details include:
 - is_primary
 - project_count
 
+{context_block}
+
 ==============================
 DATABASE SCHEMA
 ==============================
