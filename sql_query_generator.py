@@ -521,11 +521,48 @@ class SQLQueryGenerator:
     # -----------------------------
     # SQL Generation
     # -----------------------------
-    def generate_sql_query(self, natural_language_query: str) -> str:
+    def generate_sql_query(self, natural_language_query: str, user_context: dict | None = None) -> str:
+
         """
         Generate SQL query from natural language using Watsonx.
         """
         logger.info("Generating SQL query from user request")
+        context_block = ""
+        print("Contextual inform ", user_context)
+
+        if user_context:
+            context_block = f"""
+                ==============================
+                CURRENT USER CONTEXT
+                ==============================
+                The logged-in user information:
+                
+                user_id: {user_context.get("user_id")}
+                talent_id: {user_context.get("talent_id")}
+                user_name: {user_context.get("user_name")}
+                email: {user_context.get("email")}
+                is_manager: {user_context.get("is_manager")}
+                
+                CONTEXT RULES:
+                --------------
+                If the user query contains words like:
+                - "my"
+                - "me"
+                - "mine"
+                
+                You MUST interpret them as referring to:
+                users.user_id = {user_context.get("user_id")}
+                
+                Example:
+                "Show my expertise"
+                → WHERE users.user_id = {user_context.get("user_id")}
+                
+                "Show my submissions"
+                → submissions.user_id = {user_context.get("user_id")}
+                
+                "Who is my manager?"
+                → lookup manager using manager_user_id.
+                """
 
         system_prompt = f"""
 You are an expert DB2 SQL developer generating production-ready SQL.
