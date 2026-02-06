@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+
 # Watsonx.ai SDK
 from ibm_watson_machine_learning.foundation_models import Model
 from dotenv import load_dotenv
