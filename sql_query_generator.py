@@ -206,11 +206,14 @@ MANAGER & REPORTEE QUERIES
 
 Example 1:
 Query: "Get manager name for user John Doe"
-SQL: SELECT u.user_id, u.user_name, m.user_name as manager_name, m.email as manager_email
+SQL: SELECT u.user_name AS employee_name,
+       m.user_name AS manager_name
 FROM users u
-LEFT JOIN users m ON u.manager_user_id = m.user_id
-WHERE LOWER(u.user_name) LIKE LOWER('%john doe%')
+LEFT JOIN users m
+    ON u.manager_user_id = m.user_id
+WHERE LOWER(u.user_name) LIKE LOWER('%John Doe%')
 AND u.is_active = TRUE;
+
 
 Example 2:
 Query: "List all reportees for manager with talent_id T12345"
@@ -710,6 +713,45 @@ MANAGER RULES
   JOIN users m ON u.manager_user_id = m.user_id
 - To get manager details use: m.user_name, m.email, m.talent_id
 
+STRICT MANAGER-REPORTEE JOIN RULE (CRITICAL)
+----------------------------------------------
+Alias usage MUST follow this rule:
+
+Employee/User alias: u
+Manager alias: m
+Reportee alias: r
+
+To fetch manager of a user:
+    users u = employee
+    users m = manager
+
+Join MUST be:
+    u.manager_user_id = m.user_id
+
+Correct pattern:
+FROM users u
+LEFT JOIN users m
+    ON u.manager_user_id = m.user_id
+
+u = employee
+m = manager
+
+NEVER reverse aliases.
+
+Wrong pattern (FORBIDDEN):
+FROM users m
+JOIN users u ON u.manager_user_id = m.user_id
+
+When returning columns:
+- Manager name must come from alias m
+- Employee name must come from alias u
+
+Example correct:
+SELECT
+    u.user_name AS employee_name,
+    m.user_name AS manager_name
+
+
 REPORTEE RULES
 --------------
 - Reportees are users where:
@@ -765,6 +807,15 @@ Statuses include:
 • PARTIAL
 • PARTIALLY_APPROVED
 • PENDING_REVIEW
+
+STRICT Pending submissions include statuses:
+pending, pending_review
+Approved submissions include:
+approved
+Partially approved submissions include:
+partially_approved
+Rejected submissions include:
+rejected
 
 Examples:
 UPPER(s.submission_status) LIKE UPPER('%PENDING%')
